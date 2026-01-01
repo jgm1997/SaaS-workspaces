@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, Header, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
@@ -6,11 +6,9 @@ from supabase_auth import User
 
 from app.core.security import ALGORITHM, SECRET_KEY
 from app.db.session import SessionLocal
+from app.models.workspace import Workspace, WorkspaceMember
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
-# Module-level dependency objects to avoid calling Depends() in function signatures
-OAUTH2_SCHEME_DEP = Depends(oauth2_scheme)
 
 
 def get_db():
@@ -21,7 +19,7 @@ def get_db():
         db.close()
 
 
-# DB dependency object must be created after `get_db` is defined
+OAUTH2_SCHEME_DEP = Depends(oauth2_scheme)
 DB_DEP = Depends(get_db)
 
 
@@ -37,3 +35,31 @@ def get_current_user(token: str = OAUTH2_SCHEME_DEP, db: Session = DB_DEP):
         raise HTTPException(status_code=401, detail="User not found")
 
     return user
+
+
+CURRENT_USER_SCHEME = Depends(get_current_user)
+
+
+def get_current_workspace(
+    x_workspace: str | None = Header(default=None, alias="X-Workspace"),
+    db: Session = DB_DEP,
+    user: User = CURRENT_USER_SCHEME,
+) -> Workspace:
+    if not x_workspace:
+        raise HTTPException(status_code=400, detail="X-Workspace header missing.")
+
+    workspace = db.query(Workspace).filter(Workspace.pk == x_workspace).first()
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found.")
+
+    membership = (
+        db.query(WorkspaceMember)
+        .filter(
+            WorkspaceMember.user == user.pk, WorkspaceMember.workspace == workspace.pk
+        )
+        .first()
+    )
+    if not membership:
+        raise HTTPException(status_code=403, detail="Not a member of this workspace.")
+
+    return workspace
