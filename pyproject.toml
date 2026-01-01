@@ -76,9 +76,12 @@ line_length = 88
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "B"]
 ignore = []
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+filterwarnings = ["ignore:.*crypt.*:DeprecationWarning:passlib.utils"]
