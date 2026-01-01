@@ -6,6 +6,10 @@ from sqlalchemy import engine_from_config, pool
 from app.core.config import settings
 from app.db.base import Base
 
+# Add your models' MetaData here
+# Import models so they are registered on Base.metadata
+from app.models import user, workspace  # noqa: F401
+
 # Alembic Config object
 config = context.config
 
@@ -16,7 +20,7 @@ config.set_main_option("sqlalchemy.url", str(settings.database_url))
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Add your models' MetaData here
+
 target_metadata = Base.metadata
 
 
