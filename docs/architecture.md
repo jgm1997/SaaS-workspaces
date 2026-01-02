@@ -6,13 +6,13 @@
   - Ejemplo: `pk UUID PRIMARY KEY DEFAULT gen_random_uuid()`
 - Timestamps: `created_at TIMESTAMPTZ NOT NULL DEFAULT now()`, `updated_at TIMESTAMPTZ`
 - Soft delete: `deleted_at TIMESTAMPTZ` (NULL = activo)
-- Nombres: snake_case para columnas y tablas (ej.: `workspaces`, `projects`, `users`)
+- Nombres: snake_case para columnas y tablas (ej.: `workspace`, `project`, `user`, `rel1_rel2`)
 - Índices: índices compuestos para consultas frecuentes (`workspace_pk`, `created_at`, etc.)
 
 Ejemplo (Postgres):
 
 ```sql
-CREATE TABLE workspaces (
+CREATE TABLE workspace (
     pk UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
@@ -56,12 +56,12 @@ Recomendación:
 - docs/
   - architecture.md
 - src/
-  - api/        (endpoints)
-  - auth/       (login, refresh, middleware)
-  - services/   (business logic)
-  - db/         (migrations, seeds)
-  - models/     (ORM / queries)
-  - infra/      (deploy, terraform)
+  - api/ (endpoints)
+  - auth/ (login, refresh, middleware)
+  - services/ (business logic)
+  - db/ (migrations, seeds)
+  - models/ (ORM / queries)
+  - infra/ (deploy, terraform)
 - tests/
 
 ## Flujo de autenticación
@@ -71,9 +71,9 @@ Recomendación:
 3. JWT incluye `sub=user_pk`, claims mínimos. No incluir workspace por defecto.
 4. Cada request: Authorization header `Bearer <token>` + `X-Workspace: <workspace-pk>`.
 5. Middleware:
-     - Verifica JWT,
-     - Verifica que `user_pk` está activo,
-     - Verifica membership: `users_workspaces` contiene (user_pk, workspace_pk) y rol.
+   - Verifica JWT,
+   - Verifica que `user_pk` está activo,
+   - Verifica membership: `users_workspaces` contiene (user_pk, workspace_pk) y rol.
 6. Refresh: `POST /auth/refresh` con refresh token → nuevo access token.
 7. Logout/revocation: marcar refresh token como inválido en DB.
 
@@ -82,9 +82,9 @@ Recomendación:
 1. Crear workspace: `POST /workspaces` (owner = creador).
 2. Tabla membership: `users_workspaces(pk, user_pk, workspace_pk, role, accepted_at, invited_by)`
 3. Invitar:
-     - Crear registro de invitación + token,
-     - Enviar email con link,
-     - Al aceptar: crear `users_workspaces` si no existe.
+   - Crear registro de invitación + token,
+   - Enviar email con link,
+   - Al aceptar: crear `users_workspaces` si no existe.
 4. Roles: owner, admin, member (controlan permisos CRUD).
 5. Eliminación: soft-delete del workspace; limpiar / transferir recursos según política.
 
@@ -95,9 +95,9 @@ Recomendación:
 3. Acceso: validar `X-Workspace` + membership role → permitir crear/leer/editar/borrar.
 4. Relacionar recursos (issues, tasks) usando `project_pk` y `workspace_pk` para evitar fuga entre workspaces.
 5. Ejemplo endpoint:
-     - GET /workspaces/:workspace_pk/projects
-     - POST /workspaces/:workspace_pk/projects
-     - PATCH /workspaces/:workspace_pk/projects/:project_pk
+   - GET /workspaces/:workspace_pk/projects
+   - POST /workspaces/:workspace_pk/projects
+   - PATCH /workspaces/:workspace_pk/projects/:project_pk
 
 Notas finales:
 

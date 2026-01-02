@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
@@ -10,6 +12,8 @@ from app.models.project import Project
 from app.models.user import User
 from app.models.workspace import Workspace
 
+logger = logging.getLogger("app")
+
 
 def create_project(
     db: Session,
@@ -18,7 +22,10 @@ def create_project(
     name: str,
     description: str | None = None,
 ) -> Project:
-    project = Project(name=name, description=description, workspace=workspace.pk)
+    logger.info("Creating project", extra={"workspace": workspace.pk, "user": user.pk})
+    project = Project(
+        name=name, description=description, workspace=workspace.pk, created_by=user.pk
+    )
     if not can_create_project(db, user, workspace):
         raise PermissionError("User cannot create project in this workspace")
     db.add(project)
@@ -47,17 +54,21 @@ def update_project(
     name: str | None,
     description: str | None,
 ) -> Project | None:
+    logger.info(
+        "Updating project",
+        extra={"project": project_pk, "workspace": workspace.pk, "user": user.pk},
+    )
     project = get_project(db, workspace, project_pk)
     if not project:
         return None
 
     if not can_edit_project(db, user, workspace, project):
         raise PermissionError("User cannot edit this project")
-
     if name is not None:
         project.name = name
     if description is not None:
         project.description = description
+    project.updated_by = user.pk
 
     db.commit()
     db.refresh(project)
@@ -67,6 +78,10 @@ def update_project(
 def delete_project(
     db: Session, workspace: Workspace, user: User, project_pk: str
 ) -> bool:
+    logger.info(
+        "Deleting project",
+        extra={"project": project_pk, "workspace": workspace.pk, "user": user.pk},
+    )
     project = get_project(db, workspace, project_pk)
     if not project:
         return False

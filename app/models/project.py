@@ -4,10 +4,11 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
+from app.db.audit import AuditMixin
 from app.db.base import Base
 
 
-class Project(Base):
+class Project(Base, AuditMixin):
     __tablename__ = "project"
 
     pk = Column(
