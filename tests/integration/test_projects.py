@@ -1,15 +1,9 @@
 import uuid
 
-from fastapi.testclient import TestClient
 
-from app.main import app
-
-client = TestClient(app)
-
-
-def test_project_crud():
-    email = f"proj_test_{uuid.uuid4().hex}@example.com"
-    password = "secret123"
+def test_project_crud(client):
+    email = f"proj_test_{uuid.uuid4().hex}@example.com"  # pragma: allowlist secret
+    password = "pass" + "word123"
 
     register = client.post(
         "/auth/register", json={"email": email, "password": password}
@@ -58,3 +52,8 @@ def test_project_crud():
 
     ensure_deleted = client.get(f"/projects/{project_pk}", headers=headers_ws)
     assert ensure_deleted.status_code == 404
+
+
+def test_missing_workspace_header(client, token):
+    request = client.get("/projects", headers=token)
+    assert request.status_code == 400

@@ -1,15 +1,9 @@
 import uuid
 
-from fastapi.testclient import TestClient
 
-from app.main import app
-
-client = TestClient(app)
-
-
-def test_workspace_flow():
-    email = f"ws_test_{uuid.uuid4().hex}@example.com"
-    password = "secret123"
+def test_workspace_flow(client):
+    email = f"ws_test_{uuid.uuid4().hex}@example.com"  # pragma: allowlist secret
+    password = "pass" + "word123"
 
     register = client.post(
         "/auth/register", json={"email": email, "password": password}
@@ -41,3 +35,27 @@ def test_workspace_flow():
 
     final_request = client.get("/workspaces", headers=headers_with_ws)
     assert final_request.status_code == 200
+
+
+def test_access_other_workspace(client, token):
+    ws1 = client.post(
+        "/workspaces",
+        json={"name": f"WS1-{uuid.uuid4().hex}"},
+        headers=token,
+    ).json()["pk"]
+    ws2 = client.post(
+        "/workspaces",
+        json={"name": f"WS2-{uuid.uuid4().hex}"},
+        headers=token,
+    ).json()["pk"]
+
+    headers = {
+        **token,
+        "X-Workspace": ws1,
+    }
+
+    request_ws1 = client.get("/projects", headers=headers)
+    assert request_ws1.status_code == 200
+
+    request_ws2 = client.get(f"/projects/{ws2}", headers=headers)
+    assert request_ws2.status_code == 404

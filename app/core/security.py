@@ -1,12 +1,17 @@
+import os
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from jose import jwt
 from passlib.context import CryptContext
 
+from app.core.config import settings
+
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 ALGORITHM = "HS256"
-SECRET_KEY = "your-secret-key"
+SECRET_KEY = (
+    os.getenv("SECRET_KEY") or getattr(settings, "secret_key", None) or "dev-secret"
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

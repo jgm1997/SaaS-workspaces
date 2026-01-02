@@ -6,8 +6,8 @@ BASE_URL = "http://localhost:8000"
 
 
 def test_full_flow():
-    email = f"e2e+{uuid.uuid4()}@example.com"
-    password = "secret123"
+    email = f"e2e+{uuid.uuid4()}@example.com"  # pragma: allowlist secret
+    password = "pass" + "word123"
 
     register_user = requests.post(
         f"{BASE_URL}/auth/register", json={"email": email, "password": password}

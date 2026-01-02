@@ -1,6 +1,6 @@
 """create project table
 
-Revision ID: 865371a245d9
+Revision ID: 865371a245d9  # pragma: allowlist secret
 Revises: 722f004a966a
 Create Date: 2026-01-02 11:45:25.464304
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "865371a245d9"
+revision: str = "865371a245d9"  # pragma: allowlist secret
 down_revision: Union[str, Sequence[str], None] = "722f004a966a"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
