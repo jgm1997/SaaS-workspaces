@@ -10,5 +10,16 @@ services:
       - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: saas_api
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-saas_workspaces}
+    ports:
+      - "8000:8000"
+
 volumes:
   db_data:
