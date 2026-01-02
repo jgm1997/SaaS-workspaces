@@ -1,7 +1,7 @@
 """initial empty migration
 
-Revision ID: 2883bccc7222
-Revises: 280e67ddaad6
+Revision ID: 0001
+Revises: None
 Create Date: 2026-01-01 20:05:02.258964
 
 """
@@ -9,7 +9,7 @@ Create Date: 2026-01-01 20:05:02.258964
 from typing import Sequence, Union
 
 # revision identifiers, used by Alembic.
-revision: str = "2883bccc7222"
+revision: str = "0001"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

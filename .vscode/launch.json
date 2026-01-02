@@ -24,7 +24,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
-      "args": ["-q"],
+      "args": ["-v"],
       "console": "integratedTerminal",
       "env": {
         "PYTHONPATH": "${workspaceFolder}"

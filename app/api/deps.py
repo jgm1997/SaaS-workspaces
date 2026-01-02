@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import ALGORITHM, SECRET_KEY
 from app.db.session import SessionLocal
+from app.models.invitation import Invitation
 from app.models.user import User
 from app.models.workspace import Workspace, WorkspaceMember
 
@@ -63,3 +64,10 @@ def get_current_workspace(
         raise HTTPException(status_code=403, detail="Not a member of this workspace.")
 
     return workspace
+
+
+def get_invitation(invitation_pk: str, db: Session = DB_DEP) -> Invitation:
+    invitation = db.query(Invitation).filter(Invitation.pk == invitation_pk).first()
+    if not invitation:
+        raise HTTPException(status_code=404, detail="Invitation not found.")
+    return invitation

@@ -17,7 +17,7 @@ def register(data: UserCreate, db: Session = DB_DEP):
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 
-@router.post("/login")
+@router.post("/login", response_model=Token)
 def login(data: LoginRequest, db: Session = DB_DEP):
     try:
         token = authenticate_user(db, data.email, data.password)

@@ -1,7 +1,7 @@
 """create user, workspace and workspace_member tables with uuid pk
 
-Revision ID: 722f004a966a
-Revises: 2883bccc7222
+Revision ID: 0002
+Revises: 0001
 Create Date: 2026-01-01 21:37:06.522488
 
 """
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "722f004a966a"
-down_revision: Union[str, Sequence[str], None] = "2883bccc7222"
+revision: str = "0002"
+down_revision: Union[str, Sequence[str], None] = "0001"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
