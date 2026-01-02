@@ -12,13 +12,13 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: ${POSTGRES_USER}
-          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-          POSTGRES_DB: ${POSTGRES_DB}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: saas_workspaces
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U ${POSTGRES_USER}"
+          --health-cmd="pg_isready -U ${{ env.POSTGRES_USER }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
