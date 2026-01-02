@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app.api.constants import DB_DEP, PROJECT_NOT_FOUND, USER_DEP, WORKSPACE_DEP
+from app.core.rate_limit import limiter, workspace_key
 from app.models.user import User
 from app.models.workspace import Workspace
 from app.schemas.project import ProjectCreate, ProjectRead, ProjectUpdate
@@ -17,8 +18,10 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 
 @router.post("", response_model=ProjectRead)
+@limiter.limit("30/minute", key_func=workspace_key)
 def cretate_project_endpoint(
     data: ProjectCreate,
+    request: Request,
     db: Session = DB_DEP,
     user: User = USER_DEP,
     workspace: Workspace = WORKSPACE_DEP,
@@ -47,9 +50,11 @@ def get_project_endpoint(
 
 
 @router.put("/{project_pk}", response_model=ProjectRead)
+@limiter.limit("30/minute", key_func=workspace_key)
 def update_project_endpoint(
     project_pk: str,
     data: ProjectUpdate,
+    request: Request,
     db: Session = DB_DEP,
     user: User = USER_DEP,
     workspace: Workspace = WORKSPACE_DEP,
@@ -63,8 +68,10 @@ def update_project_endpoint(
 
 
 @router.delete("/{project_pk}")
+@limiter.limit("30/minute", key_func=workspace_key)
 def delete_project_endpoint(
     project_pk: str,
+    request: Request,
     db: Session = DB_DEP,
     user: User = USER_DEP,
     workspace: Workspace = WORKSPACE_DEP,

@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app.api.constants import DB_DEP
+from app.core.rate_limit import limiter
 from app.schemas.auth import LoginRequest, Token
 from app.schemas.user import UserCreate, UserRead
 from app.services.auth_service import authenticate_user, register_user
@@ -18,7 +19,8 @@ def register(data: UserCreate, db: Session = DB_DEP):
 
 
 @router.post("/login", response_model=Token)
-def login(data: LoginRequest, db: Session = DB_DEP):
+@limiter.limit("5/minute")
+def login(data: LoginRequest, request: Request, db: Session = DB_DEP):
     try:
         token = authenticate_user(db, data.email, data.password)
         return Token(access_token=token)
