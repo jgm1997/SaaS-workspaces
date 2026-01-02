@@ -1,10 +1,18 @@
 import uuid
+from enum import StrEnum
 
-from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy import Column, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base
+
+
+class WorkspaceRole(StrEnum):
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    VIEWER = "viewer"
 
 
 class Workspace(Base):
@@ -32,7 +40,7 @@ class WorkspaceMember(Base):
         ForeignKey("workspace.pk", ondelete="CASCADE"),
         nullable=False,
     )
-    role = Column(String, default="member")
+    role = Column(Enum(WorkspaceRole), default=WorkspaceRole.MEMBER, nullable=False)
 
     user_rel = relationship("User", back_populates="memberships")
     workspace_rel = relationship("Workspace", back_populates="members")

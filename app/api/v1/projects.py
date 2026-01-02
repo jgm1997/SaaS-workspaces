@@ -23,7 +23,7 @@ def cretate_project_endpoint(
     user: User = USER_DEP,
     workspace: Workspace = WORKSPACE_DEP,
 ):
-    return create_project(db, workspace, data.name, data.description)
+    return create_project(db, workspace, user, data.name, data.description)
 
 
 @router.get("", response_model=list[ProjectRead])
@@ -54,7 +54,9 @@ def update_project_endpoint(
     user: User = USER_DEP,
     workspace: Workspace = WORKSPACE_DEP,
 ):
-    project = update_project(db, workspace, project_pk, data.name, data.description)
+    project = update_project(
+        db, workspace, user, project_pk, data.name, data.description
+    )
     if not project:
         raise HTTPException(status_code=404, detail=PROJECT_NOT_FOUND)
     return project
@@ -67,7 +69,7 @@ def delete_project_endpoint(
     user: User = USER_DEP,
     workspace: Workspace = WORKSPACE_DEP,
 ):
-    ok = delete_project(db, workspace, project_pk)
+    ok = delete_project(db, workspace, user, project_pk)
     if not ok:
         raise HTTPException(status_code=404, detail=PROJECT_NOT_FOUND)
     return {"status": "deleted"}
