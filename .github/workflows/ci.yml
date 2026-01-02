@@ -42,5 +42,29 @@ jobs:
       - name: Run migrations
         run: poetry run alembic upgrade head
 
+      - name: Start application (uvicorn)
+        run: |
+          # start uvicorn in background on port 8000 and capture logs
+          poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --log-level info > uvicorn.log 2>&1 &
+          echo $! > uvicorn.pid
+          # wait for /health endpoint
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:8000/health; then
+              echo "app is healthy"
+              break
+            fi
+            echo "waiting for app... ($i)"
+            sleep 1
+          done
+
       - name: Run tests
         run: poetry run pytest --maxfail=1 --disable-warnings -q
+
+      - name: Show uvicorn log
+        if: always()
+        run: |
+          echo "--- uvicorn.log ---"
+          cat uvicorn.log || true
+          if [ -f uvicorn.pid ]; then
+            echo "uvicorn pid: $(cat uvicorn.pid)"
+          fi
