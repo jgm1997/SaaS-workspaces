@@ -55,3 +55,6 @@ def test_project_crud():
 
     delete_project = client.delete(f"/projects/{project_pk}", headers=headers_ws)
     assert delete_project.status_code == 200
+
+    ensure_deleted = client.get(f"/projects/{project_pk}", headers=headers_ws)
+    assert ensure_deleted.status_code == 404
