@@ -8,7 +8,7 @@ from app.db.base import Base
 
 # Add your models' MetaData here
 # Import models so they are registered on Base.metadata
-from app.models import user, workspace  # noqa: F401
+from app.models import project, user, workspace  # noqa: F401
 
 # Alembic Config object
 config = context.config

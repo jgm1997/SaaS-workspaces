@@ -1,13 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db
+from app.api.constants import DB_DEP
 from app.schemas.auth import LoginRequest, Token
 from app.schemas.user import UserCreate, UserRead
 from app.services.auth_service import authenticate_user, register_user
-
-# Module-level dependency to avoid calling Depends() directly in signature
-DB_DEP = Depends(get_db)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

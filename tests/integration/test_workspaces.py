@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -6,7 +8,7 @@ client = TestClient(app)
 
 
 def test_workspace_flow():
-    email = "ws_test@example.com"
+    email = f"ws_test_{uuid.uuid4().hex}@example.com"
     password = "secret123"
 
     register = client.post(
@@ -21,7 +23,7 @@ def test_workspace_flow():
     headers = {"Authorization": f"Bearer {token}"}
 
     workspaces_post = client.post(
-        "/workspaces", json={"name": "My WS"}, headers=headers
+        "/workspaces", json={"name": f"My WS {uuid.uuid4().hex}"}, headers=headers
     )
     assert workspaces_post.status_code == 200
     workspace = workspaces_post.json()
