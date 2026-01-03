@@ -1,7 +1,8 @@
 import uuid
+from datetime import datetime, timezone
 from enum import StrEnum
 
-from sqlalchemy import Column, Enum, ForeignKey, String
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -41,6 +42,7 @@ class WorkspaceMember(Base):
         nullable=False,
     )
     role = Column(Enum(WorkspaceRole), default=WorkspaceRole.MEMBER, nullable=False)
+    joined_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
 
     user_rel = relationship("User", back_populates="memberships")
     workspace_rel = relationship("Workspace", back_populates="members")

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from sqlalchemy.orm import Session
 
-from app.api.constants import DB_DEP, USER_DEP
+from app.api.deps import DB_DEP, USER_DEP
 from app.models.user import User
 from app.schemas.workspace import WorkspaceCreate, WorkspaceRead
 from app.services.workspace_service import _create_workspace, list_user_workspaces

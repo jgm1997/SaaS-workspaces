@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 
-from app.api.constants import DB_DEP
+from app.api.deps import DB_DEP
 from app.core.rate_limit import limiter
 from app.schemas.auth import LoginRequest, Token
 from app.schemas.user import UserCreate, UserRead

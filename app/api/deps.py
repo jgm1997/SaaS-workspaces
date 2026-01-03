@@ -9,8 +9,6 @@ from app.models.invitation import Invitation
 from app.models.user import User
 from app.models.workspace import Workspace, WorkspaceMember
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
 
 def get_db():
     db = SessionLocal()
@@ -20,8 +18,9 @@ def get_db():
         db.close()
 
 
-OAUTH2_SCHEME_DEP = Depends(oauth2_scheme)
+# Define dependencies
 DB_DEP = Depends(get_db)
+OAUTH2_SCHEME_DEP = Depends(OAuth2PasswordBearer(tokenUrl="/auth/login"))
 
 
 def get_current_user(token: str = OAUTH2_SCHEME_DEP, db: Session = DB_DEP):
@@ -38,13 +37,14 @@ def get_current_user(token: str = OAUTH2_SCHEME_DEP, db: Session = DB_DEP):
     return user
 
 
-CURRENT_USER_SCHEME = Depends(get_current_user)
+# Define user dependency after get_current_user is defined
+USER_DEP = Depends(get_current_user)
 
 
 def get_current_workspace(
     x_workspace: str | None = Header(default=None, alias="X-Workspace"),
     db: Session = DB_DEP,
-    user: User = CURRENT_USER_SCHEME,
+    user: User = USER_DEP,
 ) -> Workspace:
     if not x_workspace:
         raise HTTPException(status_code=400, detail="X-Workspace header missing.")
@@ -66,8 +66,16 @@ def get_current_workspace(
     return workspace
 
 
+# Define workspace dependency after get_current_workspace is defined
+WORKSPACE_DEP = Depends(get_current_workspace)
+
+
 def get_invitation(invitation_pk: str, db: Session = DB_DEP) -> Invitation:
     invitation = db.query(Invitation).filter(Invitation.pk == invitation_pk).first()
     if not invitation:
         raise HTTPException(status_code=404, detail="Invitation not found.")
     return invitation
+
+
+# Define invitation dependency after get_invitation is defined
+INVITATION_DEP = Depends(get_invitation)

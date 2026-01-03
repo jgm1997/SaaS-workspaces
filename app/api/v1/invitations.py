@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session
 
-from app.api.constants import INVITATION_DEP, USER_DEP, WORKSPACE_DEP
-from app.api.deps import DB_DEP
+from app.api.deps import DB_DEP, INVITATION_DEP, USER_DEP, WORKSPACE_DEP
 from app.models.invitation import Invitation
 from app.models.user import User
 from app.models.workspace import Workspace

@@ -3,7 +3,12 @@ import uuid
 import pytest
 from fastapi.testclient import TestClient
 
+from app.db.session import SessionLocal
 from app.main import app
+from app.models.invitation import Invitation
+from app.models.project import Project
+from app.models.user import User
+from app.models.workspace import Workspace, WorkspaceMember
 
 
 @pytest.fixture
@@ -21,6 +26,19 @@ def client():
 
     # Set a unique test client id header so rate-limit keys are isolated
     test_client_id = str(uuid.uuid4())
+    # Ensure the test database is clean for each client to avoid state leakage
+    session = SessionLocal()
+    try:
+        # Delete in order to respect foreign key constraints
+        session.query(WorkspaceMember).delete()
+        session.query(Invitation).delete()
+        session.query(Project).delete()
+        session.query(Workspace).delete()
+        session.query(User).delete()
+        session.commit()
+    finally:
+        session.close()
+
     client = TestClient(app)
     client.headers.update({"X-Test-Client-ID": test_client_id})
     return client

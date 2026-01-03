@@ -3,6 +3,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from app.api.v1.auth import router as auth_router
 from app.api.v1.invitations import router as invitations_router
+from app.api.v1.members import router as members_router
 from app.api.v1.projects import router as projects_router
 from app.api.v1.workspaces import router as workspaces_router
 from app.core.logging import configure_logging
@@ -27,6 +28,7 @@ app.add_middleware(AbuseProtectionMiddleware)
 
 app.include_router(auth_router)
 app.include_router(invitations_router)
+app.include_router(members_router)
 app.include_router(projects_router)
 app.include_router(workspaces_router)
 

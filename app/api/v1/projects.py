@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 
-from app.api.constants import DB_DEP, PROJECT_NOT_FOUND, USER_DEP, WORKSPACE_DEP
+from app.api.constants import PROJECT_NOT_FOUND
+from app.api.deps import DB_DEP, USER_DEP, WORKSPACE_DEP
 from app.core.rate_limit import limiter, workspace_key
 from app.models.user import User
 from app.models.workspace import Workspace
