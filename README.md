@@ -15,6 +15,16 @@ https://api.your-saas.com
 
 (Development: `http://localhost:8000`)
 
+## Technologies used
+
+- `Python >= 3.11`
+- `FastAPI >= 0.115.0`
+- `PostgreSQL >= 15`
+- `SQLAlchemy >= 2.0.45`
+- `Alembic >= 1.17.2`
+- `Pytest >= 8.0.0`
+- `Poetry >= 2.0.0`
+
 ---
 
 ## Authentication

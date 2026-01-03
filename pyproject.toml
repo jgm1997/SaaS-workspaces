@@ -44,7 +44,7 @@ build-backend = "poetry.core.masonry.api"
 name = "saas-workspaces"
 version = "0.1.0"
 description = "SaaS Workspaces backend in Python"
-authors = ["Tu Nombre <tu@email>"]
+authors = ["Javier González Martín <jgm_1997@protonmail.com>"]
 readme = "README.md"
 packages = [{ include = "app" }]
 
